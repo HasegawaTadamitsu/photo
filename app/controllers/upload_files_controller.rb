@@ -72,6 +72,7 @@ class UploadFilesController < ApplicationController
     if pa.nil?
       raise "paramete is nil."
     end
+
     tmp_uploaded_file = pa.tempfile
     if tmp_uploaded_file.nil?
       raise "uploaded file is nil."
@@ -81,7 +82,6 @@ class UploadFilesController < ApplicationController
     saved_file_name  = create_uniq_file_name upload_file_name
     saved_file_name_with_path = SAVED_DIR + saved_file_name
 
-    File.rename(tmp_uploaded_file, saved_file_name_with_path)
 
     @upload_file = UploadFile.new
     @upload_file.file_size = size
@@ -93,12 +93,12 @@ class UploadFilesController < ApplicationController
 
     respond_to do |format|
       if @upload_file.save
+        File.rename(tmp_uploaded_file, saved_file_name_with_path)
         format.html {
           redirect_to :action=>'complete',
-                 :id => @upload_file.saved_file_name
-        }
-          
+                 :id => @upload_file.saved_file_name     }
       else
+        File.delete(tmp_uploaded_file)
         format.html { render :action => "new" }
       end
     end
