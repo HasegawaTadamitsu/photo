@@ -11,6 +11,7 @@
     %th
     %th
     %th
+    %th
 
   - @upload_files.each do |upload_file|
     %tr
@@ -20,7 +21,7 @@
       %td= upload_file.upload_client_ip
       %td= upload_file.upload_time
       %td= upload_file.file_size
-
+      %td= link_to 'show', upload_files_path+"/"+upload_file.saved_file_name
 %br
 
 = link_to 'New Upload file', new_upload_file_path

@@ -8,30 +8,32 @@ class UploadFilesController < ApplicationController
     digest_str = Digest::MD5.hexdigest(micro_sec_time_str).to_s
   end
 
-  # GET /upload_files
-  # GET /upload_files.xml
   def index
     @upload_files = UploadFile.all
 
     respond_to do |format|
       format.html # index.html.erb
-      format.xml  { render :xml => @upload_files }
     end
   end
 
-  # GET /upload_files/1
-  # GET /upload_files/1.xml
+
   def show
-    @upload_file = UploadFile.find(params[:id])
-
+    @upload_file = UploadFile.find_by_saved_file_name(params[:id])
     respond_to do |format|
-      format.html # show.html.erb
-      format.xml  { render :xml => @upload_file }
+      format.html 
     end
   end
 
-  # GET /upload_files/new
-  # GET /upload_files/new.xml
+
+  def show_pic
+    @upload_file = UploadFile.find_by_saved_file_name(params[:id])
+
+    send_file @upload_file.saved_file_name_with_path,
+    :type=>'image/jpeg',:disposition => 'inline'
+
+  end
+
+
   def new
     @upload_file = UploadFile.new
 
@@ -41,8 +43,7 @@ class UploadFilesController < ApplicationController
     end
   end
 
-  # POST /upload_files
-  # POST /upload_files.xml
+
   def create
     
     pa = params[:upload_file][:upload_file_name]
@@ -68,22 +69,17 @@ class UploadFilesController < ApplicationController
     @upload_file.upload_time = Time.now
     @upload_file.upload_client_ip = "!!" # request.env['HTTP_X_FORWARDED_FOR'] 
 
-    result = @upload_file.save
-
-#    if !result 
-#      respond_to do |format|
-#        format.html { render :action => "new" }
-#      end
-#    end
-#    format.html {
-#      format.html { render :action => "show" }
-#      redirect_to(@upload_file,
-#                      :notice => 'Upload file was successfully created.') }
-#      else
-#        format.html { render :action => "new" }
-#      end
-#    end
-
+    respond_to do |format|
+      if @upload_file.save
+        format.html {
+          redirect_to :controller=>'upload_files',
+                      :action=>'show',
+                      :id => @upload_file.saved_file_name,
+                      :notice => 'Upload file was successfully created.' }
+      else
+        format.html { render :action => "new" }
+      end
+    end
   end
 
 end
