@@ -1,18 +1,16 @@
+# -*- coding: utf-8 -*-
 class UploadFilesController < ApplicationController
+
+  respond_to :html
 
   SAVED_DIR = "/var/tmp/upload/"
 
-  def create_uniq_file_name salt_str
-    micro_sec_time = Time.now.to_f
-    micro_sec_time_str = micro_sec_time.to_s + salt_str
-    digest_str = Digest::MD5.hexdigest(micro_sec_time_str).to_s
-  end
 
   def index
     @upload_files = UploadFile.all
 
     respond_to do |format|
-      format.html # index.html.erb
+      format.html
     end
   end
 
@@ -22,6 +20,24 @@ class UploadFilesController < ApplicationController
     respond_to do |format|
       format.html 
     end
+  end
+
+
+  def complete
+    @upload_file = UploadFile.find_by_saved_file_name(params[:id])
+    if @upload_file.nil?
+      @upload_file = UploadFile.new
+      @upload_file.un_upload
+      render :action => "new"
+      return 
+    end
+    @data=Hash.new
+    @data[:url] = url_for(   :action=>'show' ) 
+#+
+#      @upload_file.saved_file_name
+
+    respond_with  @urlx
+
   end
 
 
@@ -36,17 +52,23 @@ class UploadFilesController < ApplicationController
 
   def new
     @upload_file = UploadFile.new
-
     respond_to do |format|
-      format.html # new.html.erb
-      format.xml  { render :xml => @upload_file }
+      format.html
     end
   end
 
 
   def create
     
-    pa = params[:upload_file][:upload_file_name]
+    po = params[:upload_file]
+    if po.nil?
+      @upload_file = UploadFile.new
+      @upload_file.un_upload
+      render :action => "new"
+      return 
+    end
+
+    pa = po[:upload_file_name]
     if pa.nil?
       raise "paramete is nil."
     end
@@ -72,14 +94,21 @@ class UploadFilesController < ApplicationController
     respond_to do |format|
       if @upload_file.save
         format.html {
-          redirect_to :controller=>'upload_files',
-                      :action=>'show',
-                      :id => @upload_file.saved_file_name,
-                      :notice => 'Upload file was successfully created.' }
+          redirect_to :action=>'complete',
+                 :id => @upload_file.saved_file_name
+        }
+          
       else
         format.html { render :action => "new" }
       end
     end
+  end
+
+  private
+  def create_uniq_file_name salt_str
+    micro_sec_time = Time.now.to_f
+    micro_sec_time_str = micro_sec_time.to_s + salt_str
+    digest_str = Digest::MD5.hexdigest(micro_sec_time_str).to_s
   end
 
 end
