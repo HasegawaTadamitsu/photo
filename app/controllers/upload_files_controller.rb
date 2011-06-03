@@ -1,4 +1,13 @@
 class UploadFilesController < ApplicationController
+
+  SAVED_DIR = "/var/tmp/upload/"
+
+  def create_uniq_file_name salt_str
+    micro_sec_time = Time.now.to_f
+    micro_sec_time_str = micro_sec_time.to_s + salt_str
+    digest_str = Digest::MD5.hexdigest(micro_sec_time_str).to_s
+  end
+
   # GET /upload_files
   # GET /upload_files.xml
   def index
@@ -32,52 +41,49 @@ class UploadFilesController < ApplicationController
     end
   end
 
-  # GET /upload_files/1/edit
-  def edit
-    @upload_file = UploadFile.find(params[:id])
-  end
-
   # POST /upload_files
   # POST /upload_files.xml
   def create
-    @upload_file = UploadFile.new(params[:upload_file])
-
-    respond_to do |format|
-      if @upload_file.save
-        format.html { redirect_to(@upload_file, :notice => 'Upload file was successfully created.') }
-        format.xml  { render :xml => @upload_file, :status => :created, :location => @upload_file }
-      else
-        format.html { render :action => "new" }
-        format.xml  { render :xml => @upload_file.errors, :status => :unprocessable_entity }
-      end
+    
+    pa = params[:upload_file][:upload_file_name]
+    if pa.nil?
+      raise "paramete is nil."
     end
+    tmp_uploaded_file = pa.tempfile
+    if tmp_uploaded_file.nil?
+      raise "uploaded file is nil."
+    end
+    size = tmp_uploaded_file.size
+    upload_file_name = pa.original_filename
+    saved_file_name  = create_uniq_file_name upload_file_name
+    saved_file_name_with_path = SAVED_DIR + saved_file_name
+
+    File.rename(tmp_uploaded_file, saved_file_name_with_path)
+
+    @upload_file = UploadFile.new
+    @upload_file.file_size = size
+    @upload_file.upload_file_name = upload_file_name
+    @upload_file.saved_file_name  = saved_file_name
+    @upload_file.saved_file_name_with_path = saved_file_name_with_path
+    @upload_file.upload_time = Time.now
+    @upload_file.upload_client_ip = "!!" # request.env['HTTP_X_FORWARDED_FOR'] 
+
+    result = @upload_file.save
+
+#    if !result 
+#      respond_to do |format|
+#        format.html { render :action => "new" }
+#      end
+#    end
+#    format.html {
+#      format.html { render :action => "show" }
+#      redirect_to(@upload_file,
+#                      :notice => 'Upload file was successfully created.') }
+#      else
+#        format.html { render :action => "new" }
+#      end
+#    end
+
   end
 
-  # PUT /upload_files/1
-  # PUT /upload_files/1.xml
-  def update
-    @upload_file = UploadFile.find(params[:id])
-
-    respond_to do |format|
-      if @upload_file.update_attributes(params[:upload_file])
-        format.html { redirect_to(@upload_file, :notice => 'Upload file was successfully updated.') }
-        format.xml  { head :ok }
-      else
-        format.html { render :action => "edit" }
-        format.xml  { render :xml => @upload_file.errors, :status => :unprocessable_entity }
-      end
-    end
-  end
-
-  # DELETE /upload_files/1
-  # DELETE /upload_files/1.xml
-  def destroy
-    @upload_file = UploadFile.find(params[:id])
-    @upload_file.destroy
-
-    respond_to do |format|
-      format.html { redirect_to(upload_files_url) }
-      format.xml  { head :ok }
-    end
-  end
 end

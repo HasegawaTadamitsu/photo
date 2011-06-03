@@ -1,4 +1,4 @@
-= form_for @upload_file do |f|
+= form_for @upload_file , :html => { :multipart => true }do |f|
   -if @upload_file.errors.any?
     #error_explanation
       %h2= "#{pluralize(@upload_file.errors.count, "error")} prohibited this upload_file from being saved:"
@@ -8,21 +8,6 @@
 
   .field
     = f.label :upload_file_name
-    = f.text_field :upload_file_name
-  .field
-    = f.label :saved_file_name
-    = f.text_field :saved_file_name
-  .field
-    = f.label :saved_file_name_with_path
-    = f.text_field :saved_file_name_with_path
-  .field
-    = f.label :upload_client_ip
-    = f.text_field :upload_client_ip
-  .field
-    = f.label :upload_time
-    = f.date_select :upload_time
-  .field
-    = f.label :file_size
-    = f.text_field :file_size
+    = f.file_field :upload_file_name
   .actions
-    = f.submit 'Save'
+    = f.submit 'upload'
