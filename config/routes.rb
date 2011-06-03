@@ -1,4 +1,6 @@
 Photo::Application.routes.draw do
+  resources :upload_files
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 

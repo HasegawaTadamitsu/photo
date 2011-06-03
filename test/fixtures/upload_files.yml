@@ -1,0 +1,17 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  upload_file_name: MyString
+  saved_file_name: MyString
+  saved_file_name_with_path: MyString
+  upload_client_ip: MyString
+  upload_time: 2011-06-03
+  file_size: 1
+
+two:
+  upload_file_name: MyString
+  saved_file_name: MyString
+  saved_file_name_with_path: MyString
+  upload_client_ip: MyString
+  upload_time: 2011-06-03
+  file_size: 1

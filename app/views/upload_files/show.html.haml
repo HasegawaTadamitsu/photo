@@ -1,0 +1,24 @@
+%p#notice= notice
+
+%p
+  %b Upload file name:
+  = @upload_file.upload_file_name
+%p
+  %b Saved file name:
+  = @upload_file.saved_file_name
+%p
+  %b Saved file name with path:
+  = @upload_file.saved_file_name_with_path
+%p
+  %b Upload client ip:
+  = @upload_file.upload_client_ip
+%p
+  %b Upload time:
+  = @upload_file.upload_time
+%p
+  %b File size:
+  = @upload_file.file_size
+
+= link_to 'Edit', edit_upload_file_path(@upload_file)
+\|
+= link_to 'Back', upload_files_path
