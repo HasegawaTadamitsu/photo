@@ -13,13 +13,15 @@
 ActiveRecord::Schema.define(:version => 20110603022917) do
 
   create_table "upload_files", :force => true do |t|
-    t.string   "upload_file_name",          :null => false
-    t.string   "saved_file_name",           :null => false
-    t.string   "saved_file_name_with_path", :null => false
-    t.string   "upload_client_ip",          :null => false
-    t.date     "upload_time",               :null => false
-    t.integer  "file_size",                 :null => false
-    t.date     "last_show_time"
+    t.string   "upload_file_name",                    :null => false
+    t.string   "saved_file_name",                     :null => false
+    t.string   "upload_client_ip",                    :null => false
+    t.string   "upload_agent",                        :null => false
+    t.datetime "upload_datetime",                     :null => false
+    t.integer  "upload_file_size",                    :null => false
+    t.integer  "access_count",         :default => 0, :null => false
+    t.datetime "last_access_datetime"
+    t.datetime "deleted_datetime"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

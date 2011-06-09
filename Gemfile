@@ -7,4 +7,5 @@ gem 'pg'
 gem 'capistrano'
 
 gem 'haml-rails'
+gem 'rmagick'
 

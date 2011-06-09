@@ -1,25 +1,25 @@
-%p#notice= notice
+%h2
+  こちらは<a href="/">UIPIC<a>です。
 
-%p
-  %b Upload file name:
-  = @upload_file.upload_file_name
-%p
-  %b Saved file name:
-  = @upload_file.saved_file_name
-%p
-  %b Saved file name with path:
-  = @upload_file.saved_file_name_with_path
-%p
-  %b Upload client ip:
-  = @upload_file.upload_client_ip
-%p
-  %b Upload time:
-  = @upload_file.upload_time
-%p
-  %b File size:
-  = @upload_file.file_size
-%p
-  %b image
-  = image_tag upload_files_path + "/pic/" + @upload_file.saved_file_name, :alt=>''
+.text
+  依頼主から
+  = @data[:upload_datetime]
+  に画像のアップロードがありました。
+  - if @data[:access_count] != 0
+    あなたをのぞき、のべ
+    = @data[:access_count]
+    人の方が閲覧しており、 最後にアクセスしたのは、
+    = @data[:last_access_datetime]
+    です。
+  なおこのファイルは、最後にアクセスがあってから、しばらく経過すると
+  閲覧ができなくなるシステムです。
+  予定では
+  = @data[:will_delete_datetime]
+  に、閲覧不可になる予定です。
 
-= link_to 'Back', upload_files_path
+
+.pictute
+  = image_tag @data[:pic_url], :alt=>''
+
+= link_to 'もどる', '/'
+

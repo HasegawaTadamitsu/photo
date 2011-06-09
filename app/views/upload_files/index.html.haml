@@ -4,23 +4,18 @@
   %tr
     %th Upload file name
     %th Saved file name
-    %th Saved file name with path
     %th Upload client ip
     %th Upload time
     %th File size
-    %th
-    %th
-    %th
     %th
 
   - @upload_files.each do |upload_file|
     %tr
       %td= upload_file.upload_file_name
       %td= upload_file.saved_file_name
-      %td= upload_file.saved_file_name_with_path
       %td= upload_file.upload_client_ip
-      %td= upload_file.upload_time
-      %td= upload_file.file_size
+      %td= upload_file.upload_datetime
+      %td= upload_file.upload_file_size
       %td= link_to 'show', upload_files_path+"/"+(upload_file.saved_file_name)
 %br
 
