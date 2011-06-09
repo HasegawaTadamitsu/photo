@@ -96,7 +96,7 @@ class UploadFilesController < ApplicationController
     @upload_file.saved_file_name  = saved_file_name
     @upload_file.upload_datetime  = Time.now
     @upload_file.upload_client_ip = request.remote_ip.to_str
-    @upload_file.upload_agent     = request.env( "HTTP_USER_AGENT" )
+    @upload_file.upload_agent     = request.env["HTTP_USER_AGENT"]
     @upload_file.tmp_uploaded_file = tmp_uploaded_file.path
 
     respond_to do |format|
