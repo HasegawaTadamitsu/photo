@@ -5,7 +5,9 @@ class UploadFilesController < ApplicationController
   respond_to :html
 
   def index
-    @upload_files = UploadFile.all
+    @upload_files = UploadFile
+      .where(:deleted_datetime => nil )
+      .order(:upload_datetime)
     respond_with @upload_files
   end
 
@@ -18,6 +20,7 @@ class UploadFilesController < ApplicationController
       return
     end
     if !@upload_file.show?
+      @upload_file.delete_now!
       p "deleted data id #{:id}/at #{@upload_file.deleted_datetime}"
       render :action => "not_found",:status => 404
       return
@@ -26,8 +29,9 @@ class UploadFilesController < ApplicationController
     @data[:upload_datetime] = @upload_file.upload_datetime
     @data[:access_count] = @upload_file.access_count
     @data[:last_access_datetime] = @upload_file.last_access_datetime
-    @upload_file.access
-    @upload_file.save
+
+    @upload_file.access!
+
     @data[:will_delete_datetime] = @upload_file.will_delete_datetime
     @data[:pic_url] = upload_files_path + "/pic/" +
       @upload_file.saved_file_name
@@ -42,12 +46,14 @@ class UploadFilesController < ApplicationController
       return
     end
     if !@upload_file.show?
+      @upload_file.delete_now!
       p "deleted pic id #{:id}/at #{@upload_file.deleted_time}"
       render :action => "not_found",:status => 404
       return
     end
-    send_file @upload_file.saved_file_name_with_path,
-    :type=>'image/jpeg',:disposition => 'inline'
+
+    file = @upload_file.show_file_name_with_path
+    send_file file, :type=>'image/jpeg',:disposition => 'inline'
   end
 
   def complete
@@ -86,18 +92,12 @@ class UploadFilesController < ApplicationController
     if tmp_uploaded_file.nil?
       raise "uploaded file is nil."
     end
-    size = tmp_uploaded_file.size
+    size             = tmp_uploaded_file.size
     upload_file_name = pa.original_filename
-    saved_file_name  = create_uniq_file_name upload_file_name
+    tmp_file_name    = tmp_uploaded_file.path
 
     @upload_file = UploadFile.new
-    @upload_file.upload_file_size = size
-    @upload_file.upload_file_name = upload_file_name
-    @upload_file.saved_file_name  = saved_file_name
-    @upload_file.upload_datetime  = Time.now
-    @upload_file.upload_client_ip = request.remote_ip.to_str
-    @upload_file.upload_agent     = request.env["HTTP_USER_AGENT"]
-    @upload_file.tmp_uploaded_file = tmp_uploaded_file.path
+    @upload_file.set_all size, upload_file_name, tmp_file_name, request
 
     respond_to do |format|
       if @upload_file.save
@@ -109,14 +109,6 @@ class UploadFilesController < ApplicationController
         format.html { render :action => "new" }
       end
     end
-  end
-
-  private
-  def create_uniq_file_name salt_str
-    micro_sec_time = Time.now.to_f
-    random_value = rand 100000
-    micro_sec_time_str = micro_sec_time.to_s + salt_str + random_value.to_s
-    digest_str = Digest::MD5.hexdigest(micro_sec_time_str).to_s
   end
 
 end

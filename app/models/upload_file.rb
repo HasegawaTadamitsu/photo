@@ -5,12 +5,24 @@ require 'RMagick'
 class UploadFile < ActiveRecord::Base
 
   MAX_FILE_SIZE_BYTE = 500.kilobytes
-  SAVED_DIR = "/var/tmp/upload/"
+  SHOW_DIR = "/var/tmp/upload/show/"
+  DELETED_DIR = "/var/tmp/upload/deleted/"
+
   MAX_COLUMNS  = 120
   MAX_ROWS = 10
 
-  def tmp_uploaded_file= str
-    @tmp_uploaded_file = str
+
+  def set_all size,upload_file_name,tmp_file_name,request
+    self.upload_file_size = size
+    self.upload_file_name = upload_file_name
+    @tmp_uploaded_file =    tmp_file_name
+    self.upload_client_ip = request.remote_ip.to_str
+    self.upload_agent     = request.env["HTTP_USER_AGENT"]
+
+    self.saved_file_name  = create_uniq_file_name upload_file_name
+
+    self.upload_datetime  = Time.now
+    self.last_access_datetime = Time.now
   end
  
   def will_delete_datetime 
@@ -18,25 +30,35 @@ class UploadFile < ActiveRecord::Base
     return  last + 3.days
   end
 
-  def saved_file_name_with_path
-    return SAVED_DIR + saved_file_name
+  def show_file_name_with_path
+    return SHOW_DIR + saved_file_name
   end
 
-  def access
+  def access!
     self.access_count = self.access_count + 1
     self.last_access_datetime = Time.now
+    self.save
   end
- 
+
+  def delete_now!
+    self.deleted_datetime = Time.now
+    file = self.show_file_name_with_path
+    if File.exist? file
+      FileUtils.mv( SHOW_DIR + saved_file_name,
+                    DELETED_DIR + saved_file_name)
+    end
+    self.save
+  end
+
   def show?
     if !self.deleted_datetime.nil?
       return false
     end
-    if self.last_access_datetime.nil?
-      return true
-    end
     if will_delete_datetime < Time.now
-      self.deleted_datetime = Time.now
-      self.save
+      return false
+    end
+    file = self.show_file_name_with_path
+    if !File.exist? file
       return false
     end
     return true
@@ -115,7 +137,15 @@ class UploadFile < ActiveRecord::Base
     p columns
     p rows
 
-    @image.write saved_file_name_with_path
+    @image.write show_file_name_with_path
+  end
+
+  private
+  def create_uniq_file_name salt_str
+    micro_sec_time = Time.now.to_f
+    random_value = rand 100000
+    micro_sec_time_str = micro_sec_time.to_s + salt_str + random_value.to_s
+    digest_str = Digest::MD5.hexdigest(micro_sec_time_str).to_s
   end
 
 end
