@@ -8,9 +8,8 @@ class UploadFile < ActiveRecord::Base
   SHOW_DIR = "/var/tmp/upload/show/"
   DELETED_DIR = "/var/tmp/upload/deleted/"
 
-  MAX_COLUMNS  = 120
-  MAX_ROWS = 10
-
+  MAX_COLUMNS  = 680
+  MAX_ROWS = 400
 
   def set_all size,upload_file_name,tmp_file_name,request
     self.upload_file_size = size
