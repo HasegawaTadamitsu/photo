@@ -47,7 +47,7 @@ class UploadFilesController < ApplicationController
     end
     if !@upload_file.show?
       @upload_file.delete_now!
-      p "deleted pic id #{:id}/at #{@upload_file.deleted_time}"
+      p "deleted pic id #{:id}/at #{@upload_file.deleted_datetime}"
       render :action => "not_found",:status => 404
       return
     end
