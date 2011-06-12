@@ -125,7 +125,7 @@ class UploadFile < ActiveRecord::Base
     end
     resized_rows = rows * bai
     if resized_rows > MAX_ROWS
-      bai = MAX_ROWS.to_f / resized_rows.to_f
+      bai = MAX_ROWS.to_f / resized_rows.to_f * bai
       p "over size resized_rows #{resized_rows}" +
         "/MAX#{MAX_ROWS}/bairitsu#{bai}"
     end
