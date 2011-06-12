@@ -1,19 +1,28 @@
 %h2 upload に成功しました。URLは下のとおりです。
 
+%p
+
 .url
   = link_to "#{@data[:url]}", @data[:url]
+
+%p
 
 .message
   忘れないようにしてください。また、URLを問い合わせしていただきましても、
   お答えできませんのでご了承ください。
   URLを忘れた場合、再度ファイルのアップロードをしてください。 
   %br
-  下のリンク（mailto）より、URLを、メール送信することをおすすめします。
-  %br
-  ご利用利ありがとうございました。
+  下のリンク（メール送信や、ツイッター）より、URLを、公開しておくことをおすすめします。
+  %p
 
-.mailto
+.mailto_link
   = link_to "このURLをメール送信する", "mailto:?body=#{@data[:url]}"
+  　
+  = raw '<a href="http://twitter.com/share" class="twitter-share-button" data-url="' + @data[:url] + '" data-count="none" data-lang="ja">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>'
 
+%p
+ご利用利ありがとうございました。
+
+%p
 .footer
   = link_to 'UHPIC homeへ', upload_files_path
