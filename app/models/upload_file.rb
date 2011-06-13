@@ -113,10 +113,8 @@ class UploadFile < ActiveRecord::Base
   end
 
   def move_image 
-   columns = @image.columns
-   rows =@image.rows
-    p columns
-    p rows
+    columns = @image.columns
+    rows =@image.rows
 
     bai = 1.0
     if columns > MAX_COLUMNS
@@ -131,10 +129,20 @@ class UploadFile < ActiveRecord::Base
     end
     @image.resize!(bai)
 
-    columns = @image.columns
-    rows =   @image.rows
-    p columns
-    p rows
+    resized_columns = @image.columns
+    resized_rows    = @image.rows
+    if resized_columns > 100 and resized_rows > 10 
+      dr =Magick::Draw.new
+      dr.annotate(@image,0,0,0,0,"www.uhpic.com") do
+        dr.gravity = Magick::NorthWestGravity
+        dr.pointsize = 20
+        dr.fill ="white"
+        dr.stroke = "gray"
+        dr.stroke_width 1
+      end
+    end
+    @image.profile!("*",nil)
+    @image.strip!
 
     @image.write show_file_name_with_path
   end
