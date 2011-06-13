@@ -35,7 +35,7 @@ class UploadFilesController < ApplicationController
     @data[:will_delete_datetime] = @upload_file.will_delete_datetime
     @data[:pic_url] = upload_files_path + "/pic/" +
       @upload_file.saved_file_name
-    respond_with( @data, :layout => "show")
+    render :action => "show",:layout => "show"
   end
 
   def show_pic
@@ -51,7 +51,6 @@ class UploadFilesController < ApplicationController
       render :action => "not_found",:status => 404
       return
     end
-
     file = @upload_file.show_file_name_with_path
     send_file file, :type=>'image/jpeg',:disposition => 'inline'
   end

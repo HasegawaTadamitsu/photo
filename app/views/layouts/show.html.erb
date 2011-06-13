@@ -5,6 +5,65 @@
   <%= csrf_meta_tag %>
 <meta name="keywords" content="picture,mail,present,uhpic,">
 <meta name="description" content="present the picture to your friends">
+ <style type="text/css">
+!--
+ .contents {
+   font-size:      medium;
+   margin-top:    1em;
+   margin-bottom: 2em;
+   margin-left:   1em;
+   margin-right:  2em;
+   border-style:        ridge;
+   border-top-width:    0em;
+   border-bottom-width: 0em;
+   border-left-width:   0em;
+   border-right-width:  0em;
+
+  }
+ .contents H1 H2{
+   font-size:      medium;
+   margin-top:     10em;
+   margin-bottom: 0em;
+  }
+
+ .footer    {
+   font-size: small;
+   margin-left:   5em;
+   padding-left:  1em;
+   margin-right:  0em;
+   padding-right: 0em;
+
+   margin-top:    0.1em;
+   padding-top:   1em;
+   margin-bottom: 0em;
+   padding-bottom: 1em;
+   text-align: left;
+  }
+
+ .adsense    {
+
+ border-top:solid 3px rgb(175,175,175);
+ border-left:solid 3px rgb(175,175,175);
+ border-right:solid 3px rgb(175,175,175);
+ border-bottom:solid 3px rgb(175,175,175);
+
+   font-size: small;
+   text-align: center;
+   margin-left:   5em;
+   padding-left:  1em;
+   margin-right:  5em;
+   padding-right: 1em;
+
+   margin-top:    5em;
+   padding-top:   1em;
+   margin-bottom: 0em;
+   padding-bottom: 1em;
+ } 
+
+-->
+ </style>
+
+
 <script type="text/javascript">
 window.google_analytics_uacct = "UA-15649033-3";
 </script>
@@ -26,21 +85,27 @@ window.google_analytics_uacct = "UA-15649033-3";
 </head>
 <body bgcolor="white">
 
-<div id="contents">
+<div class="contents">
 <%= yield %>
 </div>
 
+<div class="adsense">
 <script type="text/javascript"><!--
-google_ad_client = "ca-pub-3414699717212146";
-/* uhpic */
-google_ad_slot = "4734646900";
-google_ad_width = 125;
-google_ad_height = 125;
+google_ad_client = "pub-3414699717212146";
+/* 728x15, 作成済み 10/09/19 */
+google_ad_slot = "0768922528";
+google_ad_width = 728;
+google_ad_height = 15;
 //-->
 </script>
+
 <script type="text/javascript"
 src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
 </script>
+</div>
+<div class="footer">
+  <a href="/"> UHPIC</a>
+</div>
 </body>
 
 </html>
