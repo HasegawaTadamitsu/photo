@@ -12,6 +12,11 @@
 
 ActiveRecord::Schema.define(:version => 20110603022917) do
 
+  create_table "hoshikomis", :force => true do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "upload_files", :force => true do |t|
     t.string   "upload_file_name",                    :null => false
     t.string   "saved_file_name",                     :null => false
