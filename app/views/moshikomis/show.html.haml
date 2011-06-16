@@ -20,7 +20,13 @@
 
 
 .pictute
-  = image_tag @data[:pic_url], :alt=>''
+  -  datas = @data[:upload_files]
+  -  datas.each do |data|
+    -    url     = @data[:base_pic_url] + data.url_without_basepath
+    -    comment =  data.comment
+    = image_tag url, :alt=>''
+    .comment
+      = comment
 
 
 

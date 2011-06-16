@@ -12,25 +12,30 @@
 
 ActiveRecord::Schema.define(:version => 20110603022917) do
 
-  create_table "hoshikomis", :force => true do |t|
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "upload_files", :force => true do |t|
-    t.string   "upload_file_name",                    :null => false
-    t.string   "saved_file_name",                     :null => false
+  create_table "moshikomis", :force => true do |t|
+    t.string   "html_url",                            :null => false
     t.string   "upload_client_ip",                    :null => false
     t.string   "upload_agent",                        :null => false
     t.datetime "upload_datetime",                     :null => false
-    t.integer  "upload_file_size",                    :null => false
-    t.integer  "access_count",         :default => 0, :null => false
     t.datetime "last_access_datetime"
     t.datetime "deleted_datetime"
+    t.integer  "access_count",         :default => 0, :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "upload_files", ["saved_file_name"], :name => "index_upload_files_on_saved_file_name"
+  add_index "moshikomis", ["html_url"], :name => "index_moshikomis_on_html_url"
+
+  create_table "upload_files", :force => true do |t|
+    t.integer  "moshikomi_id",     :null => false
+    t.string   "saved_file_name",  :null => false
+    t.string   "upload_file_name", :null => false
+    t.integer  "upload_file_size", :null => false
+    t.integer  "upload_columns",   :null => false
+    t.integer  "upload_rows",      :null => false
+    t.string   "comment"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
 end

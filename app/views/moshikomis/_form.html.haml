@@ -1,0 +1,18 @@
+= form_for  @mo , :html => { :multipart => true }  do |f|
+  - if @mo.errors.any?
+    #error_explanation
+      %h3= "下の原因でアップロードできませんでした。"
+      %ul
+        - @mo.errors.full_messages.each do |msg|
+          %li= msg
+  .fields
+  - f.fields_for :upload_files do |upload_file_form|
+    .field
+      = upload_file_form.label :upload_file_name
+      = upload_file_form.file_field :upload_file_name
+      %br
+      = upload_file_form.label :comment
+      = upload_file_form.text_field :comment
+     
+  .actions
+    = f.submit 'upload'

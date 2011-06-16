@@ -2,11 +2,11 @@ Photo::Application.routes.draw do
 #  root :to => "upload_files#index"
 #  resources :upload_files, :only => [:index, :new, :create]
 
-  root :to => "upload_files#new"
-  resources :upload_files, :only => [ :new, :create]
+  root :to => "moshikomis#new"
+  resources :moshikomis, :only => [ :new, :create]
 
-  match "/upload_files/:id" => "upload_files#show"
-  match "/upload_files/pic/:id" => "upload_files#show_pic"
-  match "/upload_files/complete/:id" => "upload_files#complete"
+  match "/moshikomis/:id" => "moshikomis#show"
+  match "/moshikomis/pic/:id" => "moshikomis#show_pic"
+  match "/moshikomis/complete/:id" => "moshikomis#complete"
 
 end
