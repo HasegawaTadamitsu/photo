@@ -26,10 +26,8 @@ class Moshikomi < ActiveRecord::Base
 
   def delete_now!
     self.deleted_datetime = Time.now
-    file = self.show_file_name_with_path
-    if File.exist? file
-#      FileUtils.mv( SHOW_DIR + saved_file_name,
-#                    DELETED_DIR + saved_file_name)
+    upload_files.each_with_index do |upload_file,index|
+      upload_file.delete_now!
     end
     self.save
   end
@@ -41,10 +39,12 @@ class Moshikomi < ActiveRecord::Base
     if will_delete_datetime < Time.now
       return false
     end
-#    file = self.show_file_name_with_path
-#    if !File.exist? file
-#      return false
-#    end
+    upload_files.each_with_index do |upload_file,index|
+      res = upload_file.show?
+      if res == false
+        return false
+      end
+    end
     return true
   end
 

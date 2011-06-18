@@ -43,6 +43,20 @@ class UploadFile < ActiveRecord::Base
     return true
   end
 
+  def delete_now!
+    file = self.show_file_name_with_path
+    if File.exist? file
+      FileUtils.mv( file, DELETED_DIR + saved_file_name)
+    end
+  end
+
+  def show?
+    file = self.show_file_name_with_path
+    if !File.exist? file
+      return false
+    end
+  end
+
   def my_before_create  html_url, seq
     p "my_before_save"
     self.saved_file_name  = html_url + "_" + seq.to_s
