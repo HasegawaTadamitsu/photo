@@ -12,12 +12,20 @@ class UploadFile < ActiveRecord::Base
 
   MAX_COLUMNS  = 680
   MAX_ROWS = 400
+  COMMENT_MAX_LENGTH = 100
 
-  def set_all size, upload_file_name, tmp_file_name, html_url, seq
-    self.upload_file_size = size
-    self.upload_file_name = upload_file_name
-    @tmp_uploaded_file    = tmp_file_name
-    self.saved_file_name  = html_url + "_" + seq.to_s
+  def after_init attr
+    self.comment = attr["comment"]
+    pa = attr["upload_file_name"]
+    if !pa.nil?
+      self.upload_file_name = pa.original_filename
+      tmp_uploaded_file     = pa.tempfile
+      if tmp_uploaded_file.nil?
+        raise "uploaded file is nil."
+      end
+      self.upload_file_size = tmp_uploaded_file.size
+      @tmp_uploaded_file    = tmp_uploaded_file.path
+    end
   end
 
   def url_without_basepath
@@ -28,8 +36,34 @@ class UploadFile < ActiveRecord::Base
     SHOW_DIR + self.saved_file_name
   end
 
-  protected
+  def  need_save_data?
+    if  upload_file_name.blank?
+      return false
+    end
+    return true
+  end
+
+  def my_before_create  html_url, seq
+    p "my_before_save"
+    self.saved_file_name  = html_url + "_" + seq.to_s
+    self.upload_columns   = @image.columns
+    self.upload_rows      = @image.rows
+    move_image
+  end
+
   def validate_on_create
+
+    if !need_save_data?
+      return 
+    end
+
+    if (!self.comment.blank? ) and
+        COMMENT_MAX_LENGTH < self.comment.size
+      errors.add(:comment,"が長すぎます。")
+      return
+    end
+
+
     if upload_file_size.nil? || upload_file_size == 0
       errors.add(:file_size,"ファイルのサイズが0byteです。")
       return
@@ -45,7 +79,7 @@ class UploadFile < ActiveRecord::Base
     end
 
     if upload_file_name.nil?
-      errors.add(:saved_file_name,"ファイル名がnilです。")
+      errors.add(:upload_file_name,"ファイル名がnilです。")
       return
     end
 
@@ -68,12 +102,6 @@ class UploadFile < ActiveRecord::Base
       return
     end
 
-  end
-  
-  def before_save 
-    self.upload_columns = @image.columns
-    self.upload_rows =   @image.rows
-    move_image
   end
 
   def move_image 
@@ -109,6 +137,5 @@ class UploadFile < ActiveRecord::Base
     @image.strip!
     @image.write show_file_name_with_path
   end
-
 
 end

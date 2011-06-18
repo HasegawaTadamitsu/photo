@@ -69,8 +69,6 @@ class MoshikomisController < ApplicationController
     10.times do
       @mo.upload_files.build
     end
-p @mo.upload_files.size
-p "bg" 
     respond_with @mo
   end
 
@@ -83,25 +81,13 @@ p "bg"
       return 
     end
 
-    pa = po[:upload_file_name]
-    if pa.nil?
-      raise "paramete is nil."
-    end
-
-    tmp_uploaded_file = pa.tempfile
-    if tmp_uploaded_file.nil?
-      raise "uploaded file is nil."
-    end
-
-    size             = tmp_uploaded_file.size
-    upload_file_name = pa.original_filename
-    tmp_file_name    = tmp_uploaded_file.path
-
     @mo = Moshikomi.new
-    @mo.set_all request
-
-    file = @mo.upload_files.build
-    file.set_all size, upload_file_name,tmp_file_name,@mo.html_url,1
+    @mo.after_init request
+    attrs = po[:upload_files_attributes]
+    attrs.each_key do |key|
+      up = @mo.upload_files.build
+      up.after_init  attrs[key]
+    end
 
     respond_to do |format|
       if @mo.save

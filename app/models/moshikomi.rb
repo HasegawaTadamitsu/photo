@@ -1,15 +1,18 @@
 # -*- coding: utf-8 -*-
 class Moshikomi < ActiveRecord::Base
 
-  has_many :upload_files, :dependent => :destroy, :order => :saved_file_name
+  has_many :upload_files, :dependent => :destroy,
+           :order => :saved_file_name
   accepts_nested_attributes_for :upload_files
 
   def un_upload
-    errors.add(:upload,"参照ボタンを押さずに、uploadボタンを押したか、"+
+    errors.add(:upload,
+               "参照ボタンを押さずに、uploadボタンを"+
+               "押したか、"+
                "環境的な問題でアップロードされませんでした。")
   end
 
-  def set_all request
+  def after_init request
     self.html_url         = create_uniq_file_name
     self.upload_client_ip = request.remote_ip.to_str
     self.upload_agent     = request.env["HTTP_USER_AGENT"]
@@ -52,13 +55,23 @@ class Moshikomi < ActiveRecord::Base
     return true
   end
 
+  def before_create
+    upload_files.delete_if do |upload_file|
+      !upload_file.need_save_data?
+    end
+    upload_files.each_with_index do |upload_file,index|
+      upload_file.my_before_create html_url, index
+    end
+  end
 
   private
   def create_uniq_file_name
     micro_sec_time = Time.now.to_f
     random_value = rand 100000
-    micro_sec_time_str = micro_sec_time.to_s + random_value.to_s
-    digest_str = Digest::MD5.hexdigest(micro_sec_time_str).to_s
+    micro_sec_time_str = micro_sec_time.to_s +
+                         random_value.to_s
+    digest_str = Digest::MD5.hexdigest(
+                             micro_sec_time_str).to_s
   end
 
 end
