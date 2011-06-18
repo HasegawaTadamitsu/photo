@@ -5,13 +5,6 @@ class Moshikomi < ActiveRecord::Base
            :order => :saved_file_name
   accepts_nested_attributes_for :upload_files
 
-  def un_upload
-    errors.add(:upload,
-               "参照ボタンを押さずに、uploadボタンを"+
-               "押したか、"+
-               "環境的な問題でアップロードされませんでした。")
-  end
-
   def after_init request
     self.html_url         = create_uniq_file_name
     self.upload_client_ip = request.remote_ip.to_str
@@ -55,13 +48,26 @@ class Moshikomi < ActiveRecord::Base
     return true
   end
 
-  def before_create
+  before_create :before_create_callback
+
+
+  def before_create_callback
     upload_files.delete_if do |upload_file|
       !upload_file.need_save_data?
     end
     upload_files.each_with_index do |upload_file,index|
       upload_file.my_before_create html_url, index
     end
+  end
+
+  def validate_on_create
+    if  how_many_need_upload_files == 0
+          errors.add(:upload,
+               "参照ボタンを押さずに、uploadボタンを"+
+               "押したか、"+
+               "環境的な問題でアップロードされませんでした。")
+    end
+
   end
 
   private
@@ -72,6 +78,17 @@ class Moshikomi < ActiveRecord::Base
                          random_value.to_s
     digest_str = Digest::MD5.hexdigest(
                              micro_sec_time_str).to_s
+  end
+
+
+  def how_many_need_upload_files
+    co = 0 
+    upload_files.each do |upload_file|
+      if upload_file.need_save_data?
+        co = co + 1
+      end
+    end
+    return co
   end
 
 end
