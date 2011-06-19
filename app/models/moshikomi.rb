@@ -8,7 +8,11 @@ class Moshikomi < ActiveRecord::Base
   def after_init request
     self.html_url         = create_uniq_file_name
     self.upload_client_ip = request.remote_ip.to_str
-    self.upload_agent     = request.env["HTTP_USER_AGENT"]
+    agent = request.env["HTTP_USER_AGENT"]
+    if !agent.nil? 
+      agent.strip!
+    end
+    self.upload_agent     = agent
     self.upload_datetime  = Time.now
     self.last_access_datetime = Time.now
   end
