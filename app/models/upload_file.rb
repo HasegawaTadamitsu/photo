@@ -6,7 +6,7 @@ class UploadFile < ActiveRecord::Base
 
   belongs_to :moshikomi
 
-  MAX_FILE_SIZE_BYTE = 500.kilobytes
+  MAX_FILE_SIZE_BYTE = 6.megabytes
   SHOW_DIR = "/var/tmp/upload/show/"
   DELETED_DIR = "/var/tmp/upload/deleted/"
 
