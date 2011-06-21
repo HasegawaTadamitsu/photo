@@ -2,6 +2,8 @@
 
 class MoshikomisController < ApplicationController
 
+  MAX_COUNT_PER_ONE_MOSHIKOMI = 5
+
   respond_to :html
 
   def index
@@ -66,7 +68,7 @@ class MoshikomisController < ApplicationController
 
   def new
     @mo = Moshikomi.new
-    10.times do
+    MAX_COUNT_PER_ONE_MOSHIKOMI.times do
       @mo.upload_files.build
     end
     respond_with @mo
@@ -76,14 +78,16 @@ class MoshikomisController < ApplicationController
   def create
     po = params[:moshikomi]
     if po.nil?
-      @mo = Moshikomi.new
-      render :action => "new"
-      return 
+      raise "bad request? params is nil."
     end
 
     @mo = Moshikomi.new
     @mo.after_init request
     attrs = po[:upload_files_attributes]
+    if MAX_COUNT_PER_ONE_MOSHIKOMI < attrs.size 
+      raise "bad request? attributes is over.#{attrs.size}"
+    end
+
     attrs.each_key do |key|
       up = @mo.upload_files.build
       up.after_init  attrs[key]
