@@ -10,7 +10,15 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110603022917) do
+ActiveRecord::Schema.define(:version => 20110603022918) do
+
+  create_table "messages", :force => true do |t|
+    t.integer  "moshikomi_id", :null => false
+    t.string   "title",        :null => false
+    t.string   "body",         :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "moshikomis", :force => true do |t|
     t.string   "html_url",                            :null => false
