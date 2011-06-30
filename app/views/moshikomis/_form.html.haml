@@ -6,13 +6,22 @@
         - @mo.errors.full_messages.each do |msg|
           %li= msg
   .fields
-    = f.fields_for :upload_files do |upload_file_form|
-      .field
-        = upload_file_form.label :upload_file_name
-        = upload_file_form.file_field :upload_file_name
+    .message
+      = f.fields_for :messages do |msg|
+        = msg.label :title
+        = msg.text_field :title,:size=>"20"
         %br
-        = upload_file_form.label :comment
-        = upload_file_form.text_field :comment
+        = msg.label :body
+        = msg.text_area :body,:size=>"1x1"
+
+    .upload_files
+      = f.fields_for :upload_files do |u|
+        .upload_file
+          = u.label :upload_file_name
+          = u.file_field :upload_file_name,:size=>"20"
+          %br
+          = u.label :comment
+          = u.text_field :comment,:size=>"20"
     
   .actions
     = f.submit 'upload'

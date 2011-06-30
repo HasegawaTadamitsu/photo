@@ -2,7 +2,7 @@ div.fields, div.actions {
   margin-top: 10px;
   margin-bottom: 10px;
 }
-div.field {
+div.field,div.message,div.upload_files,div.upload_file {
   margin-bottom: 10px;
 }
 

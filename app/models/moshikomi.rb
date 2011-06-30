@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 class Moshikomi < ActiveRecord::Base
 
+  has_one :message 
   has_many :upload_files, :dependent => :destroy,
            :order => :saved_file_name
-  accepts_nested_attributes_for :upload_files
+  accepts_nested_attributes_for :upload_files, :message
 
   def after_init request
     self.html_url         = create_uniq_file_name
@@ -12,7 +13,7 @@ class Moshikomi < ActiveRecord::Base
     if !agent.nil? 
       agent.strip!
     end
-    self.upload_agent     = agent
+    self.upload_agent     = agent[0..100]
     self.upload_datetime  = Time.now
     self.last_access_datetime = Time.now
   end

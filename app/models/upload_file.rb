@@ -12,13 +12,12 @@ class UploadFile < ActiveRecord::Base
 
   MAX_COLUMNS  = 680
   MAX_ROWS = 400
-  COMMENT_MAX_LENGTH = 100
 
   def after_init attr
-    self.comment = attr["comment"]
+    self.comment = attr["comment"][0..100]
     pa = attr["upload_file_name"]
     if !pa.nil?
-      self.upload_file_name = pa.original_filename
+      self.upload_file_name = pa.original_filename[0..100]
       tmp_uploaded_file     = pa.tempfile
       if tmp_uploaded_file.nil?
         raise "uploaded file is nil."
@@ -69,12 +68,6 @@ class UploadFile < ActiveRecord::Base
 
     if !need_save_data?
       return 
-    end
-
-    if (!self.comment.blank? ) and
-        COMMENT_MAX_LENGTH < self.comment.size
-      errors.add(:comment,"が長すぎます。")
-      return
     end
 
 

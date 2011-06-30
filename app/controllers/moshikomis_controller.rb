@@ -68,6 +68,7 @@ class MoshikomisController < ApplicationController
 
   def new
     @mo = Moshikomi.new
+    @mo.build_message
     MAX_COUNT_PER_ONE_MOSHIKOMI.times do
       @mo.upload_files.build
     end
@@ -87,11 +88,12 @@ class MoshikomisController < ApplicationController
     if MAX_COUNT_PER_ONE_MOSHIKOMI < attrs.size 
       raise "bad request? attributes is over.#{attrs.size}"
     end
-
     attrs.each_key do |key|
       up = @mo.upload_files.build
       up.after_init  attrs[key]
     end
+    msg = @mo.build_message
+    msg.after_init po[:messages]
 
     respond_to do |format|
       if @mo.save
