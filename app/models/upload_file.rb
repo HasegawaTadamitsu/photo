@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-
 require 'RMagick'
+
 
 class UploadFile < ActiveRecord::Base
 
@@ -17,19 +17,14 @@ class UploadFile < ActiveRecord::Base
   MAX_COLUMNS  = 680
   MAX_ROWS = 400
 
-
-  def after_init attr
-    self.comment = attr["comment"][0..100]
-    pa = attr["upload_file_name"]
-    if !pa.nil?
-      self.upload_file_name = pa.original_filename[0..100]
-      tmp_uploaded_file     = pa.tempfile
-      if tmp_uploaded_file.nil?
-        raise "uploaded file is nil."
-      end
-      self.upload_file_size = tmp_uploaded_file.size
-      @tmp_uploaded_file    = tmp_uploaded_file.path
+  def after_init!
+    self.comment = Util.str_cut(comment,10)
+    if self.upload_file_name.nil?
+      return
     end
+    self.upload_file_size = upload_file_name.tempfile.size
+    @tmp_uploaded_file    = upload_file_name.tempfile.path
+    self.upload_file_name = upload_file_name.original_filename
   end
 
   def url_without_basepath

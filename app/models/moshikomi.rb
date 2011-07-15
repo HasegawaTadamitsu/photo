@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 class Moshikomi < ActiveRecord::Base
 
   has_one :message 
@@ -10,7 +11,7 @@ class Moshikomi < ActiveRecord::Base
     do_validate_on_create
   end
 
-  def after_init request
+  def after_init! request
     self.html_url         = create_uniq_file_name
     self.upload_client_ip = request.remote_ip.to_str
     agent = request.env["HTTP_USER_AGENT"]

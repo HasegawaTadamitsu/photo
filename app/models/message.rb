@@ -4,14 +4,9 @@ class Message < ActiveRecord::Base
 
   belongs_to :moshikomi
 
-  def after_init attr
-    if attr.nil? 
-      return
-    end
-    title = attr["title"]
-    self.title = title[0..100] unless title.nil?
-    body = attr["body"]
-    self.body  = body[0..500] unless body.nil?
+  def after_init!
+    self.title = Util.str_cut(title,10)
+    self.body  = Util.str_cut(body,  10)
   end
 
 end

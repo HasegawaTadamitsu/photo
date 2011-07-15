@@ -5,6 +5,8 @@
       %ul
         - @mo.errors.full_messages.each do |msg|
           %li= msg
+  - @mo.message
+
   .fields
     .message
       = f.fields_for :message do |msg|
