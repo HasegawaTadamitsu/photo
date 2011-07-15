@@ -7,7 +7,7 @@
           %li= msg
   .fields
     .message
-      = f.fields_for :messages do |msg|
+      = f.fields_for :message do |msg|
         = msg.label :title
         = msg.text_field :title,:size=>"20"
         %br

@@ -6,6 +6,10 @@ class Moshikomi < ActiveRecord::Base
            :order => :saved_file_name
   accepts_nested_attributes_for :upload_files, :message
 
+  validate :on=>:create do 
+    do_validate_on_create
+  end
+
   def after_init request
     self.html_url         = create_uniq_file_name
     self.upload_client_ip = request.remote_ip.to_str
@@ -65,7 +69,7 @@ class Moshikomi < ActiveRecord::Base
     end
   end
 
-  validate_on_create :do_validate_on_create
+
 
   def do_validate_on_create
     if  how_many_need_upload_files == 0

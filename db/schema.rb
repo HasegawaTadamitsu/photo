@@ -14,8 +14,8 @@ ActiveRecord::Schema.define(:version => 20110603022918) do
 
   create_table "messages", :force => true do |t|
     t.integer  "moshikomi_id", :null => false
-    t.string   "title",        :null => false
-    t.string   "body",         :null => false
+    t.string   "title"
+    t.string   "body"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -45,5 +45,7 @@ ActiveRecord::Schema.define(:version => 20110603022918) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "upload_files", ["saved_file_name"], :name => "index_upload_files_on_saved_file_name"
 
 end

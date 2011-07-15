@@ -97,12 +97,13 @@ class MoshikomisController < ApplicationController
     if MAX_COUNT_PER_ONE_MOSHIKOMI < attrs.size 
       raise "bad request? attributes is over.#{attrs.size}"
     end
+    msg = @mo.build_message
+    msg.after_init po[:messages]
+
     attrs.each_key do |key|
       up = @mo.upload_files.build
       up.after_init  attrs[key]
     end
-    msg = @mo.build_message
-    msg.after_init po[:messages]
 
     respond_to do |format|
       if @mo.save
@@ -110,6 +111,7 @@ class MoshikomisController < ApplicationController
           redirect_to :action=>'complete',
                  :id => @mo.html_url     }
       else
+p msg
         format.html { render :action => "new" }
       end
     end

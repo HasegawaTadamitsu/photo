@@ -5,7 +5,10 @@ require 'RMagick'
 class UploadFile < ActiveRecord::Base
 
   belongs_to :moshikomi
-  validate_on_create :do_validate_on_create
+
+  validate :on=>:create do 
+    do_validate_on_create
+  end
 
   MAX_FILE_SIZE_BYTE = 6.megabytes
   SHOW_DIR = "/var/tmp/upload/show/"
