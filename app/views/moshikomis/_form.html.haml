@@ -21,7 +21,7 @@
           = u.file_field :upload_file_name,:size=>"20"
           %br
           = u.label :comment
-          = u.text_field :comment,:size=>"20"
+          = u.text_area :comment,:size=>"20x2"
     
   .actions
     = f.submit 'upload'

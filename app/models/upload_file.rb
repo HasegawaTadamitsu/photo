@@ -5,6 +5,7 @@ require 'RMagick'
 class UploadFile < ActiveRecord::Base
 
   belongs_to :moshikomi
+  validate_on_create :do_validate_on_create
 
   MAX_FILE_SIZE_BYTE = 6.megabytes
   SHOW_DIR = "/var/tmp/upload/show/"
@@ -12,6 +13,7 @@ class UploadFile < ActiveRecord::Base
 
   MAX_COLUMNS  = 680
   MAX_ROWS = 400
+
 
   def after_init attr
     self.comment = attr["comment"][0..100]
@@ -57,19 +59,17 @@ class UploadFile < ActiveRecord::Base
   end
 
   def my_before_create  html_url, seq
-    p "my_before_save"
     self.saved_file_name  = html_url + "_" + seq.to_s
-    self.upload_columns   = @image.columns
-    self.upload_rows      = @image.rows
+    self.upload_columns   = @images.first.columns
+    self.upload_rows      = @images.first.rows
     move_image
   end
 
-  def validate_on_create
+  def do_validate_on_create
 
     if !need_save_data?
       return 
     end
-
 
     if upload_file_size.nil? || upload_file_size == 0
       errors.add(:file_size,"ファイルのサイズが0byteです。")
@@ -98,8 +98,8 @@ class UploadFile < ActiveRecord::Base
     end
 
     begin
-      @image = Magick::Image.read(@tmp_uploaded_file).first
-      format = @image.format
+      @images = Magick::Image.read(@tmp_uploaded_file)
+      format = @images.first.format
       unless %w(JPEG GIF PNG).member?(format)
         errors.add(:image, "意図したフォーマットではありません。#{format}")
         return
@@ -112,37 +112,49 @@ class UploadFile < ActiveRecord::Base
   end
 
   def move_image 
-    columns = @image.columns
-    rows =@image.rows
-
-    bai = 1.0
-    if columns > MAX_COLUMNS
-      bai = MAX_COLUMNS.to_f / columns.to_f
-      p "over size columns #{columns}/MAX#{MAX_COLUMNS}/bairitsu#{bai}"
-    end
-    resized_rows = rows * bai
-    if resized_rows > MAX_ROWS
-      bai = MAX_ROWS.to_f / resized_rows.to_f * bai
-      p "over size resized_rows #{resized_rows}" +
-        "/MAX#{MAX_ROWS}/bairitsu#{bai}"
-    end
-    @image.resize!(bai)
-
-    resized_columns = @image.columns
-    resized_rows    = @image.rows
-    if resized_columns > 100 and resized_rows > 10 
-      dr =Magick::Draw.new
-      dr.annotate(@image,0,0,0,0,"www.uhpic.com") do
-        dr.gravity = Magick::NorthWestGravity
-        dr.pointsize = 20
-        dr.fill ="white"
-        dr.stroke = "gray"
-        dr.stroke_width 1
+    imageList = Magick::ImageList.new
+    @images.each do |img|
+      format = img.format
+      unless %w(JPEG GIF PNG).member?(format)
+        raise  "意図したフォーマットではありません。#{format}"
       end
+      columns = img.columns
+      rows =   img.rows
+
+      bai = 1.0
+      if columns > MAX_COLUMNS
+        bai = MAX_COLUMNS.to_f / columns.to_f
+        p "over size columns #{columns}/MAX#{MAX_COLUMNS}/bairitsu#{bai}"
+      end
+      resized_rows = rows * bai
+      if resized_rows > MAX_ROWS
+        bai = MAX_ROWS.to_f / resized_rows.to_f * bai
+        p "over size resized_rows #{resized_rows}" +
+          "/MAX#{MAX_ROWS}/bairitsu#{bai}"
+      end
+      img.resize!(bai)
+      
+      resized_columns = img.columns
+      resized_rows    = img.rows
+      if resized_columns > 100 and resized_rows > 10 
+        dr =Magick::Draw.new
+        dr.annotate(img,0,0,0,0,"www.uhpic.com") do
+          dr.gravity = Magick::NorthWestGravity
+          dr.pointsize = 20
+          dr.fill ="white"
+          dr.stroke = "gray"
+          dr.stroke_width 1
+        end
+      end
+      img.profile!("*",nil)
+      img.strip!
+      imageList.push img
     end
-    @image.profile!("*",nil)
-    @image.strip!
-    @image.write show_file_name_with_path
+    imageList = imageList.optimize_layers(Magick::OptimizeLayer)
+    format = @images.first.format
+    tmp_file = show_file_name_with_path + "." + format
+    imageList.write tmp_file
+    FileUtils.mv( tmp_file, show_file_name_with_path )
   end
 
 end

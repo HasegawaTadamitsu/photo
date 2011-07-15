@@ -65,7 +65,9 @@ class Moshikomi < ActiveRecord::Base
     end
   end
 
-  def validate_on_create
+  validate_on_create :do_validate_on_create
+
+  def do_validate_on_create
     if  how_many_need_upload_files == 0
           errors.add(:upload,
                "参照ボタンを押さずに、uploadボタンを"+

@@ -27,6 +27,15 @@ class MoshikomisController < ApplicationController
     @data[:access_count] = mo.access_count
     @data[:last_access_datetime] = mo.last_access_datetime
 
+    msg = mo.message
+    if msg.nil?
+      @data[:title] = "UHPIC"
+      @data[:body]  =  ""
+    else
+      @data[:title] = msg.title
+      @data[:body]  = msg.body
+    end
+
     mo.access!
 
     @data[:will_delete_datetime] = mo.will_delete_datetime
