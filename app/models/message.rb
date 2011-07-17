@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+require 'Util'
+
 class Message < ActiveRecord::Base
 
   belongs_to :moshikomi

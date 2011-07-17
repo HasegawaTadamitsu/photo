@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 require 'RMagick'
-
+require 'Util'
 
 class UploadFile < ActiveRecord::Base
 
