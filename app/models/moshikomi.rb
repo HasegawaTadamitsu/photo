@@ -45,7 +45,7 @@ class Moshikomi < ActiveRecord::Base
     self.access_count = self.access_count + 1
     self.last_access_datetime = Time.now
 
-    if kikan_start == "0"
+    if kikan_start == "1"
       set_will_deleted_datetime_from_now
     end
 
