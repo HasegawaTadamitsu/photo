@@ -17,7 +17,7 @@
           %li= msg
 
   .delete
-    いつ非公開にしますか？ 
+    いつ写真を非公開にしますか？ 
     %br
     = select :moshikomi, :kikan_start, Moshikomi.kikan_start_choices,{:selected => @mo.kikan_start}
     = select :moshikomi, :kikan_day,  Moshikomi.kikan_day_choices,{:selected => @mo.kikan_day}
@@ -33,10 +33,10 @@
         = msg.text_area :body,:size=>"1x1"
 
     .upload_files
-      ファイルを選択し、必要でしたら各コメントを入力してください。
+      写真を選択し、必要でしたら各コメントを入力してください。
       = f.fields_for :upload_files do |u|
         .upload_file
-          = u.label :ファイルを選択してください。→
+          = u.label :写真を選択してください。→
           = u.file_field :upload_file_name,:size=>"20"
           %br
           = u.label :この写真のコメントを入力してください。
