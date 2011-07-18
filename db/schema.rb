@@ -21,13 +21,16 @@ ActiveRecord::Schema.define(:version => 20110603022918) do
   end
 
   create_table "moshikomis", :force => true do |t|
-    t.string   "html_url",                            :null => false
-    t.string   "upload_client_ip",                    :null => false
-    t.string   "upload_agent",                        :null => false
-    t.datetime "upload_datetime",                     :null => false
+    t.string   "html_url",                             :null => false
+    t.string   "upload_client_ip",                     :null => false
+    t.string   "upload_agent",                         :null => false
+    t.datetime "upload_datetime",                      :null => false
+    t.string   "kikan_start",                          :null => false
+    t.integer  "kikan_day",                            :null => false
+    t.datetime "will_deleted_datetime",                :null => false
     t.datetime "last_access_datetime"
     t.datetime "deleted_datetime"
-    t.integer  "access_count",         :default => 0, :null => false
+    t.integer  "access_count",          :default => 0, :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end

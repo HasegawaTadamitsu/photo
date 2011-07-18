@@ -1,7 +1,7 @@
 module ApplicationHelper
 
  def url
-   "http://www.uhpic.com/"
+   request.protocol + "www.uhpic.com/"
  end
 
 end

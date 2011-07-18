@@ -1,6 +1,7 @@
 class Util
 
- def self.str_cut str,len
+
+  def self.str_cut str,len
    if str.nil? 
      return nil
    end

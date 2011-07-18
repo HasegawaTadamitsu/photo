@@ -2,9 +2,25 @@ div.fields, div.actions {
   margin-top: 10px;
   margin-bottom: 10px;
 }
-div.field,div.message,div.upload_files,div.upload_file {
-  margin-bottom: 10px;
+div.delete {
+  margin-bottom: 30px;
 }
+
+div.fields {
+  margin-bottom: 30px;
+}
+
+div.message {
+  margin-bottom: 30px;
+}
+
+div.upload_file {
+  margin-bottom: 30px;
+}
+div.upload_file {
+  margin-bottom: 30px;
+}
+
 
 #notice {
   color: green;

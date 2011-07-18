@@ -11,6 +11,22 @@ class Moshikomi < ActiveRecord::Base
     do_validate_on_create
   end
 
+  def self.kikan_start_choices
+    [
+     ["現在の時刻から",0],
+     ["最後にアクセスしてから",1]
+    ]
+  end
+
+  def self.kikan_day_choices
+    [
+     ["1日後",1],
+     ["3日後",3],
+     ["1週間後",7],
+     ["2週間後",14],
+    ]
+  end
+
   def after_init! request
     self.html_url         = create_uniq_file_name
     self.upload_client_ip = request.remote_ip.to_str
@@ -20,17 +36,19 @@ class Moshikomi < ActiveRecord::Base
     end
     self.upload_agent     = agent[0..100]
     self.upload_datetime  = Time.now
-    self.last_access_datetime = Time.now
+
+    set_will_deleted_datetime_from_now
   end
 
-  def will_delete_datetime 
-    last = self.last_access_datetime
-    return  last + 3.days
-  end
  
   def access!
     self.access_count = self.access_count + 1
     self.last_access_datetime = Time.now
+
+    if kikan_start == "0"
+      set_will_deleted_datetime_from_now
+    end
+
     self.save
   end
 
@@ -46,7 +64,7 @@ class Moshikomi < ActiveRecord::Base
     if !self.deleted_datetime.nil?
       return false
     end
-    if will_delete_datetime < Time.now
+    if will_deleted_datetime < Time.now
       return false
     end
     upload_files.each_with_index do |upload_file,index|
@@ -73,6 +91,11 @@ class Moshikomi < ActiveRecord::Base
 
 
   def do_validate_on_create
+    if  kikan_day > 20
+          errors.add(:kikan_day,
+               "いたずらはダメだと思います。")
+    end
+
     if  how_many_need_upload_files == 0
           errors.add(:upload,
                "参照ボタンを押さずに、uploadボタンを"+
@@ -83,6 +106,12 @@ class Moshikomi < ActiveRecord::Base
   end
 
   private
+
+  def set_will_deleted_datetime_from_now
+      self.will_deleted_datetime = Time.now
+      self.will_deleted_datetime += kikan_day.days
+  end
+  
   def create_uniq_file_name
     micro_sec_time = Time.now.to_f
     random_value = rand 100000
