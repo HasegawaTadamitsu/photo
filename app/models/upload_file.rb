@@ -14,11 +14,12 @@ class UploadFile < ActiveRecord::Base
   SHOW_DIR = "/var/tmp/upload/show/"
   DELETED_DIR = "/var/tmp/upload/deleted/"
 
+  MAX_COMMENT_LENGTH = 100
   MAX_COLUMNS  = 680
   MAX_ROWS = 400
 
   def after_init!
-    self.comment = Util.str_cut(comment,10)
+    self.comment = Util.str_cut(comment,MAX_COMMENT_LENGTH)
     if self.upload_file_name.nil?
       return
     end
