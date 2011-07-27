@@ -38,6 +38,7 @@ class MoshikomisController < ApplicationController
 
     mo.access!
 
+    @data[:url] = url_for( :action=>'show' ) 
     @data[:will_delete_datetime] = mo.will_deleted_datetime
     @data[:base_pic_url] =  moshikomis_path + "/pic/" 
     @data[:upload_files] = mo.upload_files
