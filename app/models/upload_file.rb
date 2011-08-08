@@ -29,7 +29,7 @@ class UploadFile < ActiveRecord::Base
   end
 
   def url_without_basepath
-    return saved_file_name
+    return self.saved_file_name
   end
 
   def show_file_name_with_path
@@ -151,9 +151,8 @@ class UploadFile < ActiveRecord::Base
     end
     imageList = imageList.optimize_layers(Magick::OptimizeLayer)
     format = @images.first.format
-    tmp_file = show_file_name_with_path + "." + format
-    imageList.write tmp_file
-    FileUtils.mv( tmp_file, show_file_name_with_path )
+    self.saved_file_name  = self.saved_file_name + "_" + format
+    imageList.write  show_file_name_with_path
   end
 
 end
