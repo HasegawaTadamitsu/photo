@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 class Moshikomi < ActiveRecord::Base
+  scope :delete, where(:deleted_datetime  => nil).order("upload_datetime")  
 
   has_one :message 
   has_many :upload_files, :dependent => :destroy,
@@ -58,6 +59,15 @@ class Moshikomi < ActiveRecord::Base
       upload_file.delete_now!
     end
     self.save
+  end
+
+  def show_and_delete
+    if !self.show?
+      self.delete_now!
+      puts "deleted moshikomi id #{id}/at #{deleted_datetime}"
+      return true
+    end
+    return false
   end
 
   def show?

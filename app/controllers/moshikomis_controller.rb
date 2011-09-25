@@ -6,14 +6,6 @@ class MoshikomisController < ApplicationController
 
   respond_to :html
 
-  def index
-    @upload_files = UploadFile
-      .where(:deleted_datetime => nil )
-      .order(:upload_datetime)
-    respond_with @upload_files
-  end
-
-
   def show
     html_url = params[:id]
     mo = moshikomi_find_by_html_url  html_url
@@ -119,9 +111,7 @@ class MoshikomisController < ApplicationController
       p "not found. id  #{:id}"
       return nil
     end
-    if !mo.show?
-      mo.delete_now!
-      p "deleted moshikomi id #{:id}/at #{mo.deleted_datetime}"
+    if mo.show_and_delete
       return nil
     end
     return mo
