@@ -29,5 +29,6 @@
   = @data[:will_delete_datetime]
   に、非公開になる予定です。
 
+.text
   = link_to "このURLをメール送信する", "mailto:?body=#{@data[:url]}"
   = raw '<a href="http://twitter.com/share" class="twitter-share-button" data-url="' + @data[:url] + '" data-count="none" data-lang="ja">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>'
